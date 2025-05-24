@@ -3,7 +3,39 @@
 <head>
   <title>Login - My Notes</title>
   <style>
-    /* ... keep existing styles ... */
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f2f5;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .login-box {
+      background: white;
+      padding: 2rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+    input, button {
+      display: block;
+      width: 100%;
+      margin: 10px 0;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+    button {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
     .loading {
       opacity: 0.7;
       cursor: not-allowed;
@@ -20,6 +52,12 @@
   <script type="module">
     import { supabase } from './supabase-config.js';
 
+    // Clear existing session on login page load
+    (async () => {
+      const { error } = await supabase.auth.signOut();
+      if (error) console.error('Logout error:', error);
+    })();
+
     window.login = async () => {
       const btn = document.getElementById('submitBtn');
       const errorEl = document.getElementById('error');
@@ -31,8 +69,8 @@
         const email = 'mswapnil383@gmail.com';
 
         const { error } = await supabase.auth.signInWithPassword({ email, password });
-
         if (error) throw error;
+
         window.location.href = 'knot.html';
       } catch (error) {
         errorEl.textContent = error.message;
