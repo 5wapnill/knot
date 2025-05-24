@@ -1,18 +1,18 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>My Notes</title>
-  <link rel="stylesheet" href="styles.css">
+    <title>My Notes</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <div class="header">
     <h1>My Notes</h1>
-    <button onclick="logout()">Logout</button>
+    <button onclick="logout()" class="btn btn-secondary">Logout</button>
   </div>
 
   <div class="new-note">
     <textarea id="new-note" placeholder="Write your note here..."></textarea>
-    <button onclick="addNote()">Add Note</button>
+    <button onclick="addNote()" class="btn">Add Note</button>
   </div>
   
   <div id="notes-container"></div>
