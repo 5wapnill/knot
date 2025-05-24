@@ -3,25 +3,56 @@
 <head>
   <title>Login - My Notes</title>
   <style>
-    /* Same styles as Firebase version */
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f2f5;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .login-box {
+      background: white;
+      padding: 2rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+    input, button {
+      display: block;
+      width: 100%;
+      margin: 10px 0;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+    button {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
   </style>
 </head>
 <body>
   <div class="login-box">
     <h2>My Secure Notes</h2>
-    <input type="email" id="email" placeholder="Your email">
-    <input type="password" id="password" placeholder="Password">
+    <input type="password" id="password" placeholder="Enter Password">
     <button onclick="login()">Unlock Notes</button>
     <p id="error" style="color: red;"></p>
   </div>
 
-  <!-- Supabase SDK -->
   <script type="module">
     import { supabase } from './supabase-config.js';
     
     window.login = async () => {
-      const email = document.getElementById('email').value;
       const password = document.getElementById('password').value;
+      // Using a fixed email since it's only for you
+      const email = 'mswapnil383@gmail.com'; // Replace with your email
       
       const { error } = await supabase.auth.signInWithPassword({
         email,

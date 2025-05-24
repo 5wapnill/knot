@@ -3,17 +3,82 @@
 <head>
   <title>My Notes</title>
   <style>
-    /* Same styles as Firebase version */
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f2f5;
+      margin: 0;
+      padding: 20px;
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .new-note {
+      margin-bottom: 20px;
+    }
+    textarea {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      resize: vertical;
+    }
+    button {
+      padding: 10px 20px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    button.delete {
+      background-color: #ff4444;
+    }
+    button.delete:hover {
+      background-color: #cc0000;
+    }
+    #notes-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+    }
+    .note-card {
+      background: white;
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      position: relative;
+    }
+    .note-content {
+      margin-bottom: 30px;
+      white-space: pre-wrap;
+    }
+    .note-date {
+      position: absolute;
+      bottom: 15px;
+      left: 15px;
+      font-size: 0.8em;
+      color: #666;
+    }
   </style>
 </head>
 <body>
-  <div style="display: flex; justify-content: space-between">
+  <div class="header">
     <h1>My Notes</h1>
     <button onclick="logout()">Logout</button>
   </div>
 
-  <textarea id="new-note"></textarea>
-  <button onclick="addNote()">Add Note</button>
+  <div class="new-note">
+    <textarea id="new-note" placeholder="Write your note here..."></textarea>
+    <button onclick="addNote()">Add Note</button>
+  </div>
+  
   <div id="notes-container"></div>
 
   <script type="module">
@@ -43,7 +108,14 @@
       const container = document.getElementById('notes-container');
       container.innerHTML = '';
       data.forEach(note => {
-        container.innerHTML += `<div class="note-card">${note.content}</div>`;
+        const date = new Date(note.created_at).toLocaleDateString();
+        container.innerHTML += `
+          <div class="note-card">
+            <div class="note-content">${note.content}</div>
+            <div class="note-date">${date}</div>
+            <button class="delete" onclick="deleteNote('${note.id}')">Delete</button>
+          </div>
+        `;
       });
     }
 
@@ -58,13 +130,21 @@
       document.getElementById('new-note').value = '';
     }
 
+    async function deleteNote(id) {
+      await supabase
+        .from('notes')
+        .delete()
+        .match({ id });
+    }
+
     async function logout() {
       await supabase.auth.signOut();
       window.location.href = 'index.html';
     }
 
-    // Attach functions to window for HTML onclick handlers
+    // Attach functions to window
     window.addNote = addNote;
+    window.deleteNote = deleteNote;
     window.logout = logout;
 
     // Initial load
