@@ -3,65 +3,42 @@
 <head>
   <title>Login - My Notes</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #f0f2f5;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      margin: 0;
-    }
-    .login-box {
-      background: white;
-      padding: 2rem;
-      border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-      text-align: center;
-    }
-    input, button {
-      display: block;
-      width: 100%;
-      margin: 10px 0;
-      padding: 10px;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-    }
-    button {
-      background-color: #4CAF50;
-      color: white;
-      border: none;
-      cursor: pointer;
-    }
-    button:hover {
-      background-color: #45a049;
+    /* ... keep existing styles ... */
+    .loading {
+      opacity: 0.7;
+      cursor: not-allowed;
     }
   </style>
 </head>
 <body>
   <div class="login-box">
-    <input type="password" id="password" placeholder="Enter Password">
-    <button onclick="login()">Submit</button>
+    <input type="password" id="password" placeholder="Enter Password" autocomplete="current-password">
+    <button onclick="login()" id="submitBtn">Submit</button>
     <p id="error" style="color: red;"></p>
   </div>
 
   <script type="module">
     import { supabase } from './supabase-config.js';
-    
-    window.login = async () => {
-      const password = document.getElementById('password').value;
-      // Using a fixed email since it's only for you
-      const email = 'mswapnil383@gmail.com'; // Replace with your email
-      
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password
-      });
 
-      if (error) {
-        document.getElementById('error').textContent = error.message;
-      } else {
+    window.login = async () => {
+      const btn = document.getElementById('submitBtn');
+      const errorEl = document.getElementById('error');
+      btn.classList.add('loading');
+      btn.disabled = true;
+
+      try {
+        const password = document.getElementById('password').value;
+        const email = 'mswapnil383@gmail.com';
+
+        const { error } = await supabase.auth.signInWithPassword({ email, password });
+
+        if (error) throw error;
         window.location.href = 'knot.html';
+      } catch (error) {
+        errorEl.textContent = error.message;
+      } finally {
+        btn.classList.remove('loading');
+        btn.disabled = false;
       }
     };
   </script>
