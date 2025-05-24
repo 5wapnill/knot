@@ -1,3 +1,4 @@
+// filepath: Knot/supabase-config.js
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
 
 const supabase = createClient(
@@ -6,15 +7,3 @@ const supabase = createClient(
 );
 
 export { supabase };
-
-
-// -- Drop the table if it exists (optional, for clean setup)
-// drop table if exists public.notes;
-
-// -- Create the notes table
-// create table public.notes (
-//   id uuid primary key default uuid_generate_v4(),
-//   created_at timestamp with time zone default now(),
-//   content text,
-//   user_id text
-// );
