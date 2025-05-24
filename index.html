@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Login - My Notes</title>
+  <style>
+    /* Same styles as Firebase version */
+  </style>
+</head>
+<body>
+  <div class="login-box">
+    <h2>My Secure Notes</h2>
+    <input type="email" id="email" placeholder="Your email">
+    <input type="password" id="password" placeholder="Password">
+    <button onclick="login()">Unlock Notes</button>
+    <p id="error" style="color: red;"></p>
+  </div>
+
+  <!-- Supabase SDK -->
+  <script type="module">
+    import { supabase } from './supabase-config.js';
+    
+    window.login = async () => {
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password
+      });
+
+      if (error) {
+        document.getElementById('error').textContent = error.message;
+      } else {
+        window.location.href = 'knot.html';
+      }
+    };
+  </script>
+</body>
+</html>

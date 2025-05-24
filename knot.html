@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>My Notes</title>
+  <style>
+    /* Same styles as Firebase version */
+  </style>
+</head>
+<body>
+  <div style="display: flex; justify-content: space-between">
+    <h1>My Notes</h1>
+    <button onclick="logout()">Logout</button>
+  </div>
+
+  <textarea id="new-note"></textarea>
+  <button onclick="addNote()">Add Note</button>
+  <div id="notes-container"></div>
+
+  <script type="module">
+    import { supabase } from './supabase-config.js';
+
+    // Auth check
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) window.location.href = 'index.html';
+
+    // Real-time updates
+    const channel = supabase
+      .channel('notes')
+      .on('postgres_changes', {
+        event: '*',
+        schema: 'public',
+        table: 'notes'
+      }, () => loadNotes())
+      .subscribe();
+
+    async function loadNotes() {
+      const { data, error } = await supabase
+        .from('notes')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false });
+
+      const container = document.getElementById('notes-container');
+      container.innerHTML = '';
+      data.forEach(note => {
+        container.innerHTML += `<div class="note-card">${note.content}</div>`;
+      });
+    }
+
+    async function addNote() {
+      const text = document.getElementById('new-note').value.trim();
+      if (!text) return;
+
+      await supabase
+        .from('notes')
+        .insert({ content: text, user_id: user.id });
+      
+      document.getElementById('new-note').value = '';
+    }
+
+    async function logout() {
+      await supabase.auth.signOut();
+      window.location.href = 'index.html';
+    }
+
+    // Attach functions to window for HTML onclick handlers
+    window.addNote = addNote;
+    window.logout = logout;
+
+    // Initial load
+    loadNotes();
+  </script>
+</body>
+</html>
